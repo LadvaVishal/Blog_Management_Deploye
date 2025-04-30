@@ -20,7 +20,7 @@ const transporter=nodemailer.createTransport(sendgridTransport(
 
 
 exports.getSignup=(req,res)=>{
-    res.render('auth/signUp',{
+    res.render('auth/signup',{
         errorMessage:'',
         oldInput: { },
         validationError:[],
