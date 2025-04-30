@@ -45,7 +45,7 @@ exports.postSignup = async (req, res) => {
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.render('auth/signUp', {
+            return res.render('auth/signup', {
                 errorMessage: errors.array()[0].msg,
                 oldInput: { name, email, password, phone, dob, confirmPassword },
                 adminLogin: '',
@@ -881,7 +881,7 @@ exports.postAdminSignup = async (req, res) => {
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
-            return res.render('auth/signUp', {
+            return res.render('auth/signup', {
                 errorMessage: errors.array()[0].msg,
                 oldInput: { name, email, phone, password },
                 adminLogin: 'true',
