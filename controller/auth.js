@@ -7,16 +7,29 @@ require('dotenv').config();
 
 const crypto = require('crypto'); 
 const {validationResult}=require('express-validator')
-const nodemailer=require('nodemailer')
+// const nodemailer=require('nodemailer')
 const sendgridTransport=require('nodemailer-sendgrid-transport')
 
-const transporter=nodemailer.createTransport(sendgridTransport(
-    {
-      auth:{   
-        api_key:process.env.SENDGRID_API_KEY
-      }
+// const transporter=nodemailer.createTransport(sendgridTransport(
+//     {
+//       auth:{   
+//         api_key:process.env.SENDGRID_API_KEY
+//       }
+//     }
+//   ))
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: Number(process.env.SMTP_PORT),
+    secure: false, // true for 465, false for 587
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
     }
-  ))
+});
+
 
 
 exports.getSignup=(req,res)=>{
