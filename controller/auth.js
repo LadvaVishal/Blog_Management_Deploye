@@ -90,7 +90,7 @@ exports.postSignup = async (req, res) => {
             html: `
                 <h2>Hello ${name},</h2>
                 <p>Thank you for signing up! Please verify your email by clicking the link below:</p>
-                <a href="http://localhost:3000/verify-email/${token}">Verify Email</a>
+              <a href="${process.env.EMAIL_VERIFIACTION_LINK}/verify-email/${token}">Verify Email</a>
             `
         });
 
