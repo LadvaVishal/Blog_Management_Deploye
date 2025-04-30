@@ -1,0 +1,279 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.blog-container {
+    display: flex;
+    flex-wrap: wrap;
+    /* justify-content: space-between; */
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+    width: 90%;
+    /* max-width: 900px; */
+    margin: 20px auto;
+    background-color: #fff;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Blog Card Layout */
+.blog-card {
+    flex: 1 1 calc(33.33% - 20px);
+    max-width: calc(33.33% - 20px);
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    /* text-align: center; */
+    display: flex;
+    flex-direction: column;
+    /* align-items: center; */
+}
+
+/* Blog Image */
+.blog-card .image {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.blog-card .image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Blog Title */
+.blog-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #0b0b0b;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+/* Blog Content */
+
+
+.content-border {
+    height: 80px;
+    /* width: 315px; */
+    border: 2px solid #ddd; 
+    /* padding: 10px; */
+    border-radius: 5px;
+    margin-top: 3px;
+    margin-bottom: 2px;
+    background-color: #f9f9f9;
+}
+
+
+
+/* Profile Photo */
+.profile-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ddd;
+    text-align: center;
+}
+
+/* Blog Actions */
+.blog-actions {
+    margin-top: 10px;
+}
+
+/* Buttons */
+.like-btn, .comment-btn, .edit-btn {
+    background-color: #505081;
+    color: white;
+    padding: 8px 15px;
+    margin-top: 2px;
+    margin-right: 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+
+.liked-btn {
+    background-color: rgb(230, 49, 79);
+    color: white;
+    padding: 8px 15px;
+    margin-top: 2px;
+    margin-right: 5px;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.comment-btn:hover, .edit-btn:hover {
+    background-color: #3F3F6A;
+    opacity: 0.8;
+}
+
+/* Comment Section */
+.comment-section {
+    margin-top: 10px;
+}
+
+#comment-input {
+    width: 70%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #0d0c0c;
+    border-radius: 3px;
+}
+
+button {
+    padding: 8px;
+    cursor: pointer;
+    border: none;
+    background-color: #505081;
+    color: white;
+    border-radius: 3px;
+    margin-top: 5px;
+}
+
+/* Form Styles */
+.main {
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+.container {
+    width: 50%;
+    background: rgb(255, 255, 255);
+    padding: 20px;
+    margin: 20px auto;
+    margin-top: 10%;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-left: 5px;
+    margin-right: 5px;
+    align-content: center;
+}
+
+input, textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+textarea {
+    min-height: 150px;
+}
+
+#save-blog-btn {
+    background-color: #505081;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 15px;
+    border-radius: 5px;
+    width: max-content;
+    margin-top: 1rem;
+    transition: background-color 0.3s ease-in-out;
+}
+
+#save-blog-btn:hover {
+    background-color: #272757;
+}
+
+/* Image Styling */
+.image {
+    width: 100%;
+    max-width: 1000px;
+}
+
+.image img {
+    margin-top: 1%;
+    border: solid black 2px;
+    border-radius: 5px;
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+/* User Table */
+.user-table {
+    border-radius: 15px;
+    border-spacing: 0;
+    overflow: hidden;
+    align-content: center;
+    margin-left: 5%;
+    margin-right: 5%;
+    /* margin-top: 8%; */
+    font-size: 18px;
+    text-align: center;
+    border: 1px solid black;
+    width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.user-table thead {
+    background-color: #424270;
+    color: white;
+}
+
+.user-table th, .user-table td {
+    padding: 12px;
+    border: 1px solid rgba(35, 35, 35, 0.171);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .blog-container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .blog-title {
+        font-size: 20px;
+    }
+
+    .blog-card {
+        flex: 1 1 calc(50% - 20px);
+        max-width: calc(50% - 20px);
+    }
+}
+
+@media (max-width: 480px) {
+    .blog-card {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+}

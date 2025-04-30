@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= blog.title %></title>
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    
+</head>
+<body>
+    <%- include('../layout/navigation') %> 
+    <main class="main">
+    <div class="container">
+        <div class="blog-details">
+            <h2><%= blog.title %></h2>
+            <p class="post-content">
+                <span>
+                    
+                    <img src="<%= blog.userReference.imageUrl ? blog.userReference.imageUrl : '/images/default-profile.png' %>"
+                     alt="Profile Photo" class="profile-photo" width="50">
+                </span>
+                
+            </p>
+            <span><strong>Author: <%= blog.userReference.name %></strong></span>
+            <p class="content-border"> <%= blog.content %></p>
+            <div class="image">
+                <img src="<%= blog.imageUrl %>" alt="<%= blog.title %>">
+            </div>
+
+            <button class="<%= blog.likes.includes(userId) ? 'liked-btn' : 'like-btn' %>" 
+                data-blog-id="<%= blog._id %>" 
+                onclick="likeBlog('<%=blog._id %>', '<%= userId %>')">
+            Like <%= blog.totalLike %>
+            </button>
+        </div>
+
+        <div class="comments-section">
+            <h3>Comments:</h3>
+            <% if (blog.comments.length > 0) { %>
+                <ul>
+                    <% blog.comments.forEach(comment => { %>
+                        <li>
+                            <p><strong><%= comment.userReference.name %>:</strong> <%= comment.commentContent %></p>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>No comments yet. Be the first to comment!</p>
+            <% } %>
+        </div>
+
+        <div class="add-comment">
+            <h3>Add a Comment</h3>
+            <form action="/add-comment/<%= blog._id  %>" method="POST">
+                <!-- <input type="hidden" name="blogId" value="<%= blog._id %>"> -->
+                <!-- <textarea name="commentContent" rows="1" required placeholder="Write your comment here." id="textArea" oninput="toggleButton()"></textarea> -->
+                <input type="text" name="commentContent" id="textArea" placeholder="Write a comment..."  oninput="toggleButton()">
+                <button type="submit" id="submitBtn" disabled>Post Comment</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>
+
+
+<script>
+    function toggleButton() {
+            const textArea = document.getElementById("textArea");
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.disabled = textArea.value.trim() === "";
+        }
+
+
+async function likeBlog(blogId, userId) {
+    try {
+         const response = await fetch(`/like/${blogId}`, {  
+
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ blogId, userId })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            // Update the like button dynamically
+            const likeButton = document.querySelector(`button[data-blog-id='${blogId}']`);
+            if (likeButton) {
+                likeButton.innerText = `Like ${data.totalLike}`;
+
+                if (data.liked) {
+                    likeButton.classList.add('liked-btn');
+                    likeButton.classList.remove('like-btn');
+                } else {
+                    likeButton.classList.add('like-btn');
+                    likeButton.classList.remove('liked-btn');
+                }
+            }
+        }
+    } catch (error) {
+        console.log('Error:', error);
+    }
+}
+
+</script>

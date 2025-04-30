@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/profile.css">
+    <link rel="stylesheet" href="/css/filterAndPagination.css">
+
+</head>
+<body novalidate>
+    <% if ( isAdminLoggedIn) {%>
+    <%- include('../layout/adminNavigation') %>
+    <% } else{ %>
+        <div>
+            <header class="navigation">
+                <nav class="navbar">  
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/signup">SignUp</a></li> 
+                        <li><a href="/admin-login">Admin login</a></li> 
+                    </ul>
+                </nav>
+            </header>
+        </div>
+    <% } %>
+     
+    <main class="main">
+        
+        <section class="profile-header">
+            <div class="profile-info" >
+                <img src="<%= user.imageUrl %>" alt="Profile Photo" class="profile-photo">
+                <div class="profile-details">
+                    <h2><%= user.name %></h2>
+                    <p><strong>Email:</strong> <%= user.email %></p>
+                    <p><strong>Phone:</strong> <%= user.phone %></p>
+                    <p><strong>Date of Birth:</strong> <%= new Date(user.dob).toISOString().split("T")[0] %></p>
+                </div>
+            </div>
+        </section>
+
+        <hr>
+        <hr>
+
+        <h2>User's Blogs</h2>
+        <div class="blog-container">
+                <% if (blogs.length>0){ %>
+                <% for (let blog of blogs) { %>
+                <div class="blog-card">
+                    <input type="hidden" value="<%= blog._id %>">
+                    <h2 class="blog-title"><%= blog.title %></h2>
+                    <p class="post-date">Published date: <%= blog.createdAt.toLocaleDateString() %></p>
+                    <p class="content-border">
+                        <%= blog.content%>
+                    </p>
+                    <div class="image">
+                        <img src="<%= blog.imageUrl %>" alt="<%= blog.title %>">
+                    </div>
+                    <span> <button class="like-btn">Like <%= blog.totalLike %></button> </span>
+                    <div class="comments-section">
+                        <h3>Comments:</h3>
+                        <% if (blog.comments.length > 0) { %>
+                            <ul>
+                                <% blog.comments.forEach(comment => { %>
+                                    <li style="list-style-type: none;" >
+                                        <p><strong><%= comment.userReference.name %>:</strong> <%= comment.commentContent %></p>
+                                    </li>
+                                <% }) %>
+                            </ul>
+                        <% } else { %>
+                            <p>No comments yet.</p>
+                        <% } %>
+                    </div> 
+                    
+                    <div style="display: flex; flex-direction: row;gap: 5px;">
+
+                    <form action="/admin/delete-blog/<%= blog._id %>" method="POST">
+                        <button type="submit" id="save-blog-btn" >Delete Blog</button>
+                    </form>
+                    <% if( blog.flag) {%>
+                    <form action="/admin/disable-blog/<%=blog._id%>" method="POST">
+                        <input type="hidden" value="<%= blog.userReference %>" name="userId">
+                        <button type="submit" id="save-blog-btn" >Disable Blog</button>
+                    </form>
+                    <% } else{ %>
+                        <form action="/admin/enable-blog/<%=blog._id%>" method="POST">
+                            <input type="hidden" value="<%= blog.userReference %>" name="userId">
+                            <button type="submit" id="save-blog-btn" >Enable Blog</button>
+                        </form>
+                        <% } %>
+                    </div> 
+                </div>
+                <% } %>
+            </div>
+
+
+        <div class="pagination">
+                <% if (hasPreviousPage) { %>
+                    <a href="?page=<%= previousPage %>">Previous</a>
+                <% } %>
+            
+                <% if (currentPage > 2) { %>
+                    <a href="?page=1">1</a>
+                    <% if (currentPage > 3) { %>
+                        <span>...</span>
+                    <% } %>
+                <% } %>
+            
+                <% if (currentPage > 1) { %>
+                    <a href="?page=<%= currentPage - 1 %>"><%= currentPage - 1 %></a>
+                <% } %>
+            
+                <a href="?page=<%= currentPage %>" class="active"><%= currentPage %></a>
+            
+                <% if (currentPage < lastPage) { %>
+                    <a href="?page=<%= currentPage + 1 %>"><%= currentPage + 1 %></a>
+                <% } %>
+            
+                <% if (currentPage < lastPage - 2) { %>
+                    <span>...</span>
+                <% } %>
+            
+                <% if (currentPage < lastPage - 1) { %>
+                    <a href="?page=<%= lastPage %>"><%= lastPage %></a>
+                <% } %>
+            
+                <% if (hasNextPage) { %>
+                    <a href="?page=<%= nextPage %>">Next</a>
+                <% } %>
+        </div>
+                <%   } else{ %>
+                    <h1>No Blog Found!!!!</h1>
+                    <% } %>       
+    </main>
+</body>
+</html>

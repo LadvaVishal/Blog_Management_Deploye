@@ -1,0 +1,30 @@
+
+.filter-sort-section {
+    width: fit-content;
+    margin-left: 5px;
+    margin-top: 70px;
+    margin-bottom: 10px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+}
+
+ .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    padding: 10px 15px;
+    margin:0 5px;
+    text-decoration: none;
+    background: #007bff;
+    color: white;
+    border-radius: 5px;
+}
+
+.pagination a.active {
+    background: #0056b3;
+}

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/sliderBtn.css">
+    <link rel="stylesheet" href="/css/filterAndPagination.css">
+
+     <!-- for message pop up=>> tostify.js -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css"> 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <style>
+         .popUp {
+            min-height: 20px; 
+            padding: 0px 5px 3px; 
+            border: 1px solid black; 
+            border-radius: 5px; 
+            font-size: 15px; 
+            color: white; 
+            text-align: center; 
+            background: linear-gradient(to right, #00b09b, #96c93d) ;       
+    }
+    </style>
+        
+</head>
+<body>
+    <% if (isAdminLoggedIn) { %>
+        <%- include('../layout/adminNavigation') %>
+    <% } else { %>
+        <div>
+            <header class="navigation">
+                <nav class="navbar">  
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/signup">SignUp</a></li> 
+                        <li><a href="/admin-login">Admin login</a></li> 
+                    </ul>
+                </nav>
+            </header>
+        </div>
+    <% } %>
+    
+    <main class="main">
+        <div class="filter-sort-section" >
+            <form id="filterForm" style="display: flex; flex-direction: row;height: 35px; align-content: baseline;">  
+                    <label for="searchUsername">Search</label>
+                    <input type="text" id="searchUsername" name="username" placeholder="Search"  value="<%= filters.username || '' %>" onblur="applyFilters()">
+
+                    <label for="dobStart">DOB:</label>
+                    <input type="date" id="dobStart" name="dobStart" value="<%= filters.dobStart || '' %>" onblur="applyFilters()">
+                    <label>to</label> 
+                    <input type="date" id="dobEnd" name="dobEnd" value="<%= filters.dobEnd || '' %>" onblur="applyFilters()">
+
+                    <label for="createdAtStart">Created At:</label>
+                    <input type="date" id="createdAtStart" name="createdAtStart" value="<%= filters.createdAtStart || '' %>" onblur="applyFilters()">
+                    <label>to</label> 
+                    <input type="date" id="createdAtEnd" name="createdAtEnd" value="<%= filters.createdAtEnd || '' %>" onblur="applyFilters()">
+
+                    <button type="button" onclick="clearFilters()" style="margin-left: 5px;">Clear</button>
+            </form>
+        </div>
+        <% if (users.length > 0) { %>
+            
+        <table class="user-table" >
+            <thead>
+                <tr>
+                    <th>Name
+                        <button onclick="userSorting('name', 'asc')">▲</button>
+                        <button onclick="userSorting('name', 'desc')">▼</button>
+                    </select>
+                    </th>
+                    <th>Email</th>
+                    <th>Phone Number</th>
+                    <th>DOB
+                        <button onclick="userSorting('dob', 'asc')">▲</button>
+                        <button onclick="userSorting('dob', 'desc')">▼</button>  
+                    </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let user of users) { %>
+                <tr>
+                    <td><%= user.name %></td>
+                    <td><%= user.email %></td>
+                    <td><%= user.phone %></td>
+                    <td><%= user.dob.toISOString().split("T")[0] %></td>
+                    <td>
+                        <a href="manage-blog/<%= user._id %>" class="edit-btn">Manage User Blog</a>
+                        <form action="/admin/delete-user/<%=user._id %>" method="POST" style="display:inline;">
+                            <input type="hidden" value="<%= user.name %>" name="userName">
+                            <button type="submit" onclick="deleteUser('<%= user.name %>')" class="delete-btn">Delete User</button>
+                        </form>
+                        <label class="switch"  >
+                            <input type="checkbox" id="toggleSwitch-<%= user._id %>"  <%= user.flag ? 'checked' : '' %>  onchange="toggleUser('<%= user._id %>', this.checked)"> 
+                            <span class="slider"></span>
+                        </label>
+                    </td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <% } else { %>
+            <h1>No User Found!!!!</h1>
+        <% } %>
+        <div class="pagination">
+            <select id="limitSelect"  onchange="updateLimit()" style="height: 30px;width: 50px; border: 1px solid black; border-radius: 5px;">
+                
+                <option value="3" <%= pagination.limit == 3 ? 'selected' : '' %>>3</option>
+                <option value="5" <%= pagination.limit == 5 ? 'selected' : '' %>>5</option>
+                <option value="10" <%= pagination.limit == 10 ? 'selected' : '' %>>10</option>
+                <option value="15" <%= pagination.limit == 15 ? 'selected' : '' %>>15</option>
+                <option value="0" <%= pagination.limit == 0 ? 'selected' : '' %>>All</option>
+               
+            </select>
+
+            <% if (pagination.hasPreviousPage) { %>
+                <a href="javascript:void(0)" onclick="navigatePage('<%= pagination.previousPage %>')">Previous</a>
+            <% } %>
+        
+            <% if (pagination.currentPage > 2) { %>
+                <a href="javascript:void(0)" onclick="navigatePage(1)">1</a>
+                <% if (pagination.currentPage > 3) { %>
+                    <span>...</span>
+                <% } %>
+            <% } %>
+        
+            <% if (pagination.currentPage > 1) { %>
+                <a href="javascript:void(0)" onclick="navigatePage('<%= pagination.previousPage %>')"><%= pagination.previousPage %></a>
+            <% } %>
+        
+            <a href="javascript:void(0)" class="active"><%= pagination.currentPage %></a>
+        
+            <% if (pagination.currentPage < pagination.lastPage) { %>
+                <a href="javascript:void(0)" onclick="navigatePage('<%= pagination.nextPage %>')"><%= pagination.nextPage %></a>
+            <% } %>
+        
+            <% if (pagination.currentPage < pagination.lastPage - 1) { %>
+                <span>...</span>
+                <a href="javascript:void(0)" onclick="navigatePage('<%= pagination.lastPage %>')"><%= pagination.lastPage %></a>
+            <% } %>
+        
+            <% if (pagination.hasNextPage) { %>
+                <a href="javascript:void(0)" onclick="navigatePage('<%= pagination.nextPage %>')">Next</a>
+            <% } %>
+        </div>
+    </main>
+</body>
+</html>
+
+<script>
+    function navigatePage(page) {
+    const queryParams = new URLSearchParams(window.location.search);
+
+    const limit = document.getElementById('limitSelect').value; 
+    queryParams.set('limit', limit);
+
+    queryParams.set('page', page);  
+    window.location.href = `/admin/user-details?${queryParams.toString()}`;
+}
+
+function updateLimit() {
+    const queryParams = new URLSearchParams(window.location.search);
+    const limit = document.getElementById('limitSelect').value; 
+
+    queryParams.set('limit', limit);
+    queryParams.set('page', 1);
+
+    window.location.href = `/admin/user-details?${queryParams.toString()}`;
+}
+
+
+function userSorting(field, order) {
+
+
+    const searchUsername = document.getElementById("searchUsername").value;
+    const dobStart = document.getElementById("dobStart").value;
+    const dobEnd = document.getElementById("dobEnd").value;
+    const createdAtStart = document.getElementById("createdAtStart").value;
+    const createdAtEnd = document.getElementById("createdAtEnd").value;
+
+
+    const queryParams = new URLSearchParams(window.location.search);
+
+    queryParams.set("sortField", field);
+    queryParams.set("sortOrder", order);
+
+    const limit = document.getElementById('limitSelect').value; 
+    queryParams.set('limit', limit);
+
+    if (searchUsername) queryParams.set("username", searchUsername);
+    if (dobStart) queryParams.set("dobStart", dobStart);
+    if (dobEnd) queryParams.set("dobEnd", dobEnd);
+    if (createdAtStart) queryParams.set("createdAtStart", createdAtStart);
+    if (createdAtEnd) queryParams.set("createdAtEnd", createdAtEnd);
+    queryParams.set('page', 1);
+
+    window.location.href = `/admin/user-details?${queryParams.toString()}`;
+}
+
+function applyFilters() {
+
+    const queryParamsSort = new URLSearchParams(window.location.search);
+    const sortField = queryParamsSort.has("sortField") ? queryParamsSort.get("sortField") : null;
+    const sortOrder = queryParamsSort.has("sortOrder") ? queryParamsSort.get("sortOrder") : null;
+
+    const searchUsername = document.getElementById("searchUsername").value;
+    const dobStart = document.getElementById("dobStart").value;
+    const dobEnd = document.getElementById("dobEnd").value;
+    const createdAtStart = document.getElementById("createdAtStart").value;
+    const createdAtEnd = document.getElementById("createdAtEnd").value;
+
+    const queryParams = new URLSearchParams();
+    if (searchUsername) queryParams.set("username", searchUsername);
+    if (dobStart) queryParams.set("dobStart", dobStart);
+    if (dobEnd) queryParams.set("dobEnd", dobEnd);
+    if (createdAtStart) queryParams.set("createdAtStart", createdAtStart);
+    if (createdAtEnd) queryParams.set("createdAtEnd", createdAtEnd);
+
+    if (sortField) queryParams.set("sortField", sortField);
+    if (sortOrder) queryParams.set("sortOrder", sortOrder);
+
+    const limit = document.getElementById('limitSelect').value; 
+    queryParams.set('limit', limit);
+
+    window.location.href = `/admin/user-details?${queryParams.toString()}`;
+}
+
+
+function clearFilters() {
+
+    window.location.href = '/admin/user-details';
+}
+
+
+window.onload = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const deletedUser = urlParams.get("deletedUser"); 
+        console.log("user deletd",deleteUser);
+        
+        if (deletedUser) {
+            deleteUser(deletedUser);
+
+            setTimeout(() => {
+                window.location.href = '/admin/user-details';
+            }, 3000);
+        }
+    };
+
+    function deleteUser(user) {
+        const msg = user + " deleted";
+        console.log("User deleted:", msg);
+        Toastify({
+            text: msg,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: false,
+            className: 'popUp'
+        }).showToast();
+    }
+
+
+async function toggleUser(userId, flagValue) {
+    let msg = flagValue ? "User Enabled" : "User Disabled";
+
+    try {
+        const response = await fetch(`/admin/toggle-user/${userId}`,
+         {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ flag: flagValue })
+        });
+
+        const data = await response.json();
+        console.log(data);
+
+        Toastify({
+            text: msg,
+            duration: 3000,
+            close: true,
+            gravity: "top",
+            position: "right",
+            stopOnFocus: false,
+            className: 'popUp'
+        }).showToast();
+
+    } catch (error) {
+        console.log('Error:', error);
+    }
+}
+
+</script>

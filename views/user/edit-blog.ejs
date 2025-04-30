@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit New Blog</title>
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+   
+</head>
+<body>
+    <%- include('../layout/navigation') %>
+    <main class="main">
+    <div class="container" >
+        <h2>Edit Blog</h2>
+        <% if (errorMessage) {%>
+            <div class="errmsg" id="errorBackend">
+              <%= errorMessage %>
+            </div>
+        <% } %>
+        <p id="frontEndError" class="errmsg"></p>
+        <form action="/edit-blog/<%= blog._id %>" novalidate method="POST" onsubmit="return validateBlogForm(event)"  enctype="multipart/form-data"> 
+            <label for="title">Blog Title:</label>
+            <input type="text" id="title" name="title" novalidate value="<%= blog.title %>">
+
+            <label for="content">Blog content:</label>
+            <textarea id="content" name="content" rows="5" required ><%= blog.content %></textarea>
+            <div class="image">
+              <label for="image">Upload Image:</label>
+              <input type="file" name="image" id="image"onchange="previewImage(event)">
+              <% if (blog.imageUrl) { %>
+                  <img src="<%= blog.imageUrl %>" alt="Blog Image" width="50px" height="50px" id="imagePreview" style="max-width: 100%; height: auto; margin-top: 10px;">
+              <% } else { %>
+                  <p>No image uploaded</p>
+              <% } %>
+          </div>
+
+          <% if(!blog.flag) {%>
+            <p style="color: red;">You are block by admin you can not edit or delete blog</p>
+          <% }%>
+          <button type="submit" id="save-blog-btn" <%= blog.flag === true ? '' : 'disabled' %>>Save Blog</button>
+        </form>
+
+        <form action="/delete-blog/<%= blog._id %>" method="POST" >
+            <button type="submit" id="save-blog-btn" <%= blog.flag === true ? '' : 'disabled' %> >Delete</button>
+        </form>
+    </div>
+  </main>
+</body>
+</html>
+
+<script>
+  function previewImage(event) {
+        const currFiles = event.target.files;
+        let imagePreview = document.getElementById('imagePreview');
+
+        if (currFiles.length > 0) {
+            let src = URL.createObjectURL(currFiles[0]);
+            imagePreview.src = src; 
+            imagePreview.style.display = "block"; 
+        } 
+        else {
+            imagePreview.style.display = "none"; 
+          }
+        
+        }
+
+        
+    function validateBlogForm() { 
+    //   event.preventDefault(); 
+      let title=document.getElementById('title').value.trim();
+      let content=document.getElementById('content').value.trim()
+
+      let image = document.getElementById('image');
+      let imagePath = image.value;
+
+      let errMsg = document.getElementById("frontEndError");
+      errMsg.textContent = "";
+      let isValid = true;
+
+      if(title===''){
+        errMsg.textContent = "Title can't empty!";
+        isValid = false;
+      }
+      else if(content===''){
+        errMsg.textContent = "Content can't empty!";
+        isValid = false;
+      }
+      else if(content.length < 5){
+        errMsg.textContent = "Length should be greater than 5 !!!";
+        isValid = false;
+      }
+      else if (imagePath) { 
+                let extension = imagePath.split('.').pop().toLowerCase();
+                if (!["gif", "png", "bmp", "jpeg", "jpg"].includes(extension)) {
+                    errMsg.textContent = "Allowed file types: GIF, PNG, JPG, JPEG, BMP.";
+                    isValid = false;
+                }
+            }
+    if (isValid) {
+        event.target.submit();
+         return isValid
+    }
+    else{
+        return isValid;
+       }
+      };
+
+</script>

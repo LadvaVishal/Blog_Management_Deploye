@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title> 
+    <link rel="stylesheet" type="text/css" href="/css/navigation.css">
+    <link rel="stylesheet" type="text/css" href="/css/signup.css">
+    <link rel="stylesheet" href="/css/blog.css">
+
+</head>
+<body>
+  
+  <%- include('../layout/navigation') %>
+
+  <div class="wrapper">
+    <h2>Edit Profile</h2>
+    <% if (errorMessage) {%>
+      <div class="errmsg" id="errorBackend" >
+        <%= errorMessage %>
+      </div>
+      <% } %>
+    <p id="frontEndErr" class="errmsg"></p>
+
+    <form 
+    action="/edit-profile" 
+    method="post"
+    enctype="multipart/form-data"
+    novalidate
+    onsubmit="return validateUserForm(event)"
+    > 
+      <div class="input-box">
+        <input type="text" placeholder="Enter your name" name="name" id="name" value="<%= user.name %>">
+      </div>
+      
+      <div class="input-box">
+        <input type="tel" placeholder="Enter your number" name="phone" id="phone" value="<%= user.phone %>">
+      </div>
+
+      <div class="input-box">
+        <input type="date" placeholder="Enter your birth date" name="dob" id="dob" value="<%= new Date(user.dob).toISOString().split('T')[0] %>">
+      </div>
+
+      <div class="image">
+          <label for="image" id="label" style="display: block; text-align: left; ">Enter your profile photo</label>
+          <input type="file" name="image" id="image"onchange="previewImage(event)" style="display: block; text-align: left;" >
+          <% if (user.imageUrl) { %>
+            <img src="<%= user.imageUrl %>" alt="Blog Image" width="50px" height="50px" id="imagePreview" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 20px;">
+          <% } else { %>
+            <img src="" alt="Blog Image" width="50px" height="50px" id="imagePreview" style="max-width: 100%; height: auto; margin-top: 10px; margin-bottom: 20px;">
+          <% } %>
+      </div>
+
+      <div class="input-box button">
+        <input type="Submit">
+      </div> 
+    </form>
+  </div>
+</body>
+</html> 
+
+<script>
+
+function previewImage(event) {
+        const currFiles = event.target.files;
+        let imagePreview = document.getElementById('imagePreview');
+
+        if (currFiles.length > 0) {
+            let src = URL.createObjectURL(currFiles[0]);
+            imagePreview.src = src; 
+            imagePreview.style.display = "block"; 
+        } 
+        else {
+            imagePreview.style.display = "none"; 
+          }
+        }
+ 
+  function validateUserForm(event) {
+    // event.preventDefault(); 
+    let name=document.getElementById('name').value.trim();
+    let phone = document.getElementById("phone").value.trim();
+    let dob=document.getElementById('dob').value;
+
+    let image = document.getElementById('image');
+    let imagePath = image.value;
+
+   
+    let errMsg = document.getElementById("frontEndErr");
+    errMsg.textContent = "";
+    let isValid = true;
+      if (name ==="") {
+          errMsg.textContent = "Name can't empty";
+          isValid = false;  
+          }
+      else if(!name.match(/^[A-Za-z\s]+$/)){
+        errMsg.textContent = "Name can't contain number and special charactor";
+        isValid = false; 
+      }
+      else if(phone===""){
+        errMsg.textContent = "Number can't empty";
+          isValid = false;
+      }
+      else if(!phone.match(/^[6-9]\d{9}$/)){
+        errMsg.textContent = "Invalid number format";
+          isValid = false;
+      }
+      else if( dob===""){
+        errMsg.textContent = "Dob can't empty";
+          isValid = false;
+      }
+      else if((new Date(dob)) > (new Date()) ){
+        errMsg.textContent = "DOB less than current date";
+        isValid = false;
+      }
+      else if (imagePath) { 
+          let extension = imagePath.split('.').pop().toLowerCase();
+          if (!["gif", "png", "bmp", "jpeg", "jpg"].includes(extension)) {
+              errMsg.textContent = "Allowed file types: GIF, PNG, JPG, JPEG, BMP.";
+              isValid = false;
+          }
+      }
+
+      if (isValid) {
+      document.querySelector("form").submit();
+       }
+       else{
+        // document.getElementById("errorBackend").innerHTML = "";
+        return isValid;
+       }
+  }
+
+</script>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= blog.title %></title>
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+</head>
+<body>
+    <% if ( isAdminLoggedIn) {%>
+        <%- include('../layout/adminNavigation') %>
+        <% } else{ %>
+            <div>
+                <header class="navigation">
+                    <nav class="navbar">  
+                        <ul>
+                            <li><a href="/">Home</a></li>
+                            <li><a href="/signup">SignUp</a></li> 
+                            <li><a href="/admin-login">Admin login</a></li> 
+                        </ul>
+                    </nav>
+                </header>
+            </div>
+        <% } %>
+
+    <div class="container">
+        <div class="blog-details">
+            <h2><%= blog.title %></h2>
+            <p><strong>Author:</strong> <%= blog.userReference.name %></p>
+            <p class="content-border"> <%= blog.content %></p>
+            <div class="image">
+                <img src="<%= blog.imageUrl %>" alt="<%= blog.title %>">
+            </div>
+        </div>
+
+           <!-- Likes Section -->
+           <div class="likes-section">
+            <h3>Liked by:</h3>
+            <% if (blog.likes.length > 0) { %>
+                <ul>
+                    <% for (const user of blog.likes) { %>
+                        <li><strong><%= user.name %></strong></li>
+                    <% } %>
+                </ul>
+            <% } else { %>
+                <p>No likes yet. Be the first to like this blog!</p>
+            <% } %>
+        </div>
+
+        <div class="comments-section">
+            <h3>Comments:</h3>
+            <% if (blog.comments.length > 0) { %>
+                <ul>
+                    <% blog.comments.forEach(comment => { %>
+                        <li>
+                            <p><strong><%= comment.userReference.name %>:</strong> <%= comment.commentContent %></p>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else { %>
+                <p>No comments yet. Be the first to comment!</p>
+            <% } %>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+
+<script>
+    function toggleButton() {
+            const textArea = document.getElementById("textArea");
+            const submitBtn = document.getElementById("submitBtn");
+            submitBtn.disabled = textArea.value.trim() === "";
+        }
+</script>

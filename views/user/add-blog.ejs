@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Blog</title>
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+   
+</head>
+<body >
+    <%- include('../layout/navigation') %>
+    <main class="main">
+    <div class="container"  >
+        <h2>Create a Blog</h2>
+        <div class="errmsg" id="errorBackend">
+            <% if (errorMessage) {%>
+              <%= errorMessage %>
+            <% } %>
+        </div>
+       
+           
+         <p id="frontEndError" class="errmsg"></p>
+        <form action="/add-blog" method="POST" novalidate onsubmit="return validateBlogForm(event)" enctype="multipart/form-data"> 
+            <label for="title">Blog Title:</label>
+            <input type="text" id="title" name="title" value="<%= oldInput.title %>">
+
+            <label for="content">Blog content:</label>
+            <textarea id="content" name="content" rows="5" ><%=oldInput.content%></textarea>
+
+            <label for="image">Upload Image:</label>
+            <input type="file" name="image" id="image" onchange="previewImage(event)">
+
+            <img id="imagePreview" src="" alt="Image Preview" style="display: none; width: 100%; height: auto; max-height: 400px; margin-top: 10px;">
+            <% if(!user.flag) {%>
+              <p style="color: red;">You are block by admin you can not add new blog!! </p>
+              <button type="submit" id="save-blog-btn" disabled>Save Blog</button>
+              <% } else{ %>
+                <button type="submit" id="save-blog-btn">Save Blog</button>
+              <% } %>
+            
+        </form>
+    </div>
+    <main class="main"></main>
+</body>
+</html>
+
+<script>
+        function previewImage(event) {
+        const currFiles = event.target.files;
+        let imagePreview = document.getElementById('imagePreview');
+
+        if (currFiles.length > 0) {
+            let src = URL.createObjectURL(currFiles[0]);
+            imagePreview.src = src; 
+            imagePreview.style.display = "block"; 
+        } 
+        else {
+            imagePreview.style.display = "none"; 
+          }
+        }
+    function validateBlogForm(event) {
+      // event.preventDefault(); 
+      let title=document.getElementById('title').value.trim();
+      let content=document.getElementById('content').value.trim()
+ 
+      let image = document.getElementById('image');
+      let imagePath = image.value;
+
+      let errMsg = document.getElementById("frontEndError");
+      errMsg.textContent = "";
+      let isValid = true;
+
+      if(title===''){
+        errMsg.textContent = "Title can't empty!";
+        isValid = false;
+      }
+      else if(content===''){
+        errMsg.textContent = "Content can't empty!";
+        isValid = false;
+      }
+      else if(content.length < 5){
+        errMsg.textContent = "Length should be greater than 5 !!!";
+        isValid = false;
+      }
+      else if (imagePath == '') {
+        errMsg.textContent = "Please upload an image";
+        isValid = false;
+      }
+      else {
+        let Extension = imagePath.substring(imagePath.lastIndexOf('.') + 1).toLowerCase();   
+            if (!(Extension == "gif" || Extension == "png" || Extension == "bmp"|| Extension == "jpeg" || Extension == "jpg")) 
+            {
+              errMsg.textContent="Photo only allows file types of GIF, PNG, JPG, JPEG and BMP. ";
+              isValid = false;
+            } 
+        }
+    if (isValid) {
+      
+         return isValid
+    }
+    else{
+        document.getElementById("errorBackend").innerHTML="";
+        return isValid;
+       }
+      };
+
+</script>

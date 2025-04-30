@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All blog Page</title>
+    <!-- <link rel="stylesheet" href="/css/blog.css"> -->
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/admin-index.css">
+    <!-- <link rel="stylesheet" href="/css/filterAndPagination.css"> -->
+
+</head>
+<body novalidate>
+    
+    <% if ( isAdminLoggedIn) {%>
+    <%- include('../layout/adminNavigation') %>
+    <% } else{ %>
+        <div>
+            <header class="navigation">
+                <nav class="navbar">  
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/signup">SignUp</a></li> 
+                        <li><a href="/admin-login">Admin login</a></li> 
+                    </ul>
+                </nav>
+            </header>
+        </div>
+    <% } %>
+ 
+    <main >
+        <div class="dashboard-container">
+        <a href="/admin/user-details" class="card-link">  
+        <div class="card">
+            <img src="/images/user-icon.png" alt="User Icon" class="icon">
+            <h2>Total Users</h2>
+            <p><%= totalUsers %></p>
+        </div>
+        </a> 
+
+    <a href="/admin/all-blog" class="card-link"> 
+        <div class="card">
+            <img src="/images/blog-icon.jpg" alt="User Icon" class="icon">
+            <h2>Total Blog</h2>
+            <p><%= totalBlogs %></p>
+        </div>
+    </a>
+    </div>
+
+     <div class="top-ten" >
+
+        <table class="user-table" title="Top 10 Popular Blogs">
+            <caption class="table-title">Top 10 Popular Blogs</caption>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Total Likes</th>
+                    <th>Total Comments</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (topBlogs.length > 0) { %>
+                    <% for (const blog of topBlogs) { %>
+                        <tr>
+                            <td>
+                                <%= blog.title %>
+                            </td>
+                            <td><%= blog.userReference ? blog.userReference.name : 'Unknown' %></td>
+                            <td><%= blog.totalLike %></td>
+                            <td><%= blog.comments.length %></td>
+                        </tr>
+                    <% } %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4">No blogs found.</td>
+                    </tr>
+                <% } %>
+                
+            </tbody>
+        </table>
+
+        <table class="user-table">
+            <caption class="table-title">Top 10 Popular Users </caption>
+        <thead>
+            <tr>
+                <th>User Name</th>
+                <th>Most Liked Blog</th>
+                <th>Total Likes</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (topUsers.length > 0) { %>
+                <% for (const user of topUsers) { %>
+                    <tr>
+                        <td><%= user.user.name %></td>
+                        <td><%= user.mostLikedBlog.title %></td>
+                        <td><%= user.mostLikedBlog.totalLike %></td>
+                       
+                    </tr>
+                <% } %>
+            <% } else { %>
+                <tr>
+                    <td colspan="4">No users found.</td>
+                </tr>
+            <% } %>
+          </tbody>
+        </table>
+
+</main>
+</body>
+</html>

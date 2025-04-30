@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All blog Page</title>
+    <link rel="stylesheet" href="/css/blog.css">
+    <link rel="stylesheet" href="/css/navigation.css">
+    <link rel="stylesheet" href="/css/filterAndPagination.css">
+    
+</head>
+<body novalidate>
+    <% if ( isAdminLoggedIn) {%>
+    <%- include('../layout/adminNavigation') %>
+    <% } else{ %>
+        <div>
+            <header class="navigation">
+                <nav class="navbar">  
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/signup">SignUp</a></li> 
+                        <li><a href="/admin-login">Admin login</a></li> 
+                    </ul>
+                </nav>
+            </header>
+        </div>
+    <% } %>
+ 
+    <main class="main">
+
+        <form id="filterForm" style="display: flex; flex-direction: row; align-items: center; gap: 10px;">
+            <label for="searchBlog">Search Blog:</label>
+            <input type="text" id="searchBlog" name="search" placeholder="Enter Blog title"   value="<%= searchQuery || '' %>">
+            <button type="button" onclick="applySearch()">Search</button>
+        </form>
+       
+        <% if (blog.length>0) {  %>
+        <div class="blog-container">
+        <% for (let b of blog) { %>
+        <div class="blog-card">
+            <input type="hidden" value=" <%= b.id %>" name="blogId">
+            <h2 class="blog-title"><%= b.title %></h2>
+            <p class="post-content" style="display: flex; flex-direction: row; align-items: center;" >  
+                <span>
+                  <img src="<%= b.userReference.imageUrl  %>"  alt="Profile Photo" class="profile-photo">
+              </span>
+                <span> <strong >Auther:<%= b.userReference.name %></strong> </span>
+              </p>
+            <p class="post-date">Published date: <%= b.createdAt.toLocaleDateString() %></p>
+            <p class="content-border">
+                <%= b.content.substring(0,100) %>
+            </p>
+            <div class="image">
+                <img src="<%= b.imageUrl %>" alt="<%= b.title %>">
+            </div>
+            <div style="display: flex; flex-direction: row;gap: 5px;">
+            <span> <button class="like-btn"  >Like <%= b.totalLike %></button> </span>
+            <a href="/admin/view-comment/<%= b._id %>">
+                 <button class="comment-btn">View Comment</button> </a>
+          </div>
+    </div>
+    
+    <% } %>
+</div>
+        <%    } else{ %>
+            <h1>No Blog Found!!!!</h1>
+            <% } %>
+
+            <div class="pagination">
+
+                <select id="limitSelect"  onchange="updateLimit()" style="height: 30px;width: 50px; border: 1px solid black; border-radius: 5px;">
+                
+                    <option value="3" <%= limit == 3 ? 'selected' : '' %>>3</option>
+                    <option value="6" <%= limit == 6 ? 'selected' : '' %>>6</option>
+                    <option value="12" <%= limit == 12 ? 'selected' : '' %>>12</option>
+                    <option value="15" <%= limit == 15 ? 'selected' : '' %>>15</option>
+                    <option value="0" <%= limit == 0 ? 'selected' : '' %>>All </option>
+                   
+                </select>
+                <% if (hasPreviousPage) { %>
+                    <a href="javascript:void(0)" onclick="navigatePage('<%= previousPage %>')">Previous</a>
+                <% } %>
+            
+                <% if (currentPage > 2) { %>
+                    <a href="javascript:void(0)" onclick="navigatePage(1)">1</a>
+                    <% if (currentPage > 3) { %>
+                        <span>...</span>
+                    <% } %>
+                <% } %>
+            
+                <% if (currentPage > 1) { %>
+                    <a href="javascript:void(0)" onclick="navigatePage('<%= previousPage %>')"><%= previousPage %></a>
+                <% } %>
+            
+                <a href="javascript:void(0)" class="active"><%= currentPage %></a>
+            
+                <% if (currentPage < lastPage) { %>
+                    <a href="javascript:void(0)" onclick="navigatePage('<%= nextPage %>')"><%= nextPage %></a>
+                <% } %>
+            
+                <% if (currentPage < lastPage - 1) { %>
+                    <span>...</span>
+                    <a href="javascript:void(0)" onclick="navigatePage('<%= lastPage %>')"><%= lastPage %></a>
+                <% } %>
+            
+                <% if (hasNextPage) { %>
+                    <a href="javascript:void(0)" onclick="navigatePage('<%= nextPage %>')">Next</a>
+                <% } %>
+            </div>
+            
+    </main>
+</body>
+</html>
+
+<script>
+
+
+    function navigatePage(page) {
+        const queryParams = new URLSearchParams(window.location.search);
+        const limit = document.getElementById('limitSelect').value;
+
+        queryParams.set('page', page);
+        queryParams.set('limit', limit);
+
+        const searchQuery = document.getElementById('searchBlog').value;
+        if (searchQuery) queryParams.set('search', searchQuery);
+
+        window.location.href = `/admin/all-blog?${queryParams.toString()}`;
+    }
+
+    function updateLimit() {
+        const queryParams = new URLSearchParams(window.location.search);
+        const limit = document.getElementById('limitSelect').value;
+        queryParams.set('limit', limit);
+        queryParams.set('page', 1); // go to page 1 when limit changes
+
+        const searchQuery = document.getElementById('searchBlog').value;
+        if (searchQuery) queryParams.set('search', searchQuery);
+
+        window.location.href = `/admin/all-blog?${queryParams.toString()}`;
+    }
+
+
+    function applySearch() {
+        const queryParams = new URLSearchParams();
+        const searchQuery = document.getElementById('searchBlog').value;
+        if (searchQuery) queryParams.set('search', searchQuery);
+
+        const limit = document.getElementById('limitSelect').value;
+        queryParams.set('limit', limit);
+        queryParams.set('page', 1);
+
+        window.location.href = `/admin/all-blog?${queryParams.toString()}`;
+    }
+</script>
