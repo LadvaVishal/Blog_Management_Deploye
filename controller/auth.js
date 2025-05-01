@@ -464,7 +464,7 @@ exports.postForgotPassword= async (req, res) => {
             html:  `
                 <h2>Hello ${user.name},</h2>
                 <p>Click the link below to reset your password:</p>
-                <a href="http://localhost:3000/reset-password/${token}">Reset Password</a>
+                <a href="${process.env.EMAIL_VERIFIACTION_LINK}/reset-password/${token}">Reset Password</a>
                 <p>This link will expire in 1 hour.</p>
                 `
         });
