@@ -605,8 +605,8 @@ exports.postNewPassword = async (req, res) => {
 
         const user = await User.findOne({
             _id: userId,
-            resetToken: token,
-            resetTokenExpiration: { $gt: Date.now() }
+            resetToken: token
+            // resetTokenExpiration: { $gt: Date.now() }
         });
 
         if (!user) {
