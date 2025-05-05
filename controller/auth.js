@@ -593,6 +593,9 @@ exports.postNewPassword = async (req, res) => {
 
         const { password, userId } = req.body;
         const token = req.params.token;
+        console.log("user=>>>", password)
+        console.log("user=>>>", userId)
+        console.log("user=>>>", token)
 
         // Validate passwords
         // if (password !== confirmPassword) {
@@ -606,6 +609,7 @@ exports.postNewPassword = async (req, res) => {
         const user = await User.findOne({
             resetToken: token
         });
+        console.log("user=>>>", user)
 
         if (!user) {
             return res.render('auth/post-signup', {
