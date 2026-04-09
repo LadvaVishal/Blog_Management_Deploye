@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000;
 const app=express()
 const MONGO_URI= process.env.MONGO_URI
 
+console.log("App starting...");
 
 app.use(express.static(path.join(__dirname, 'public')));
 
