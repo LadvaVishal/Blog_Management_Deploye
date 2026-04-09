@@ -7,7 +7,7 @@ const sessionStore=require('connect-mongodb-session')(session)
 const multer=require('multer')
 const errorController=require('./controller/error')
 const { storage } = require('./util/cloudinary');
-
+const PORT = process.env.PORT || 3000;
  
 const app=express()
 const MONGO_URI= process.env.MONGO_URI
@@ -85,7 +85,7 @@ app.use(errorController.get404);
 mongoose
   .connect(MONGO_URI)
   .then(() => {
-    app.listen(3000);
+    app.listen(PORT);
     console.log("app run on 3000")
   })
   .catch(err => {
